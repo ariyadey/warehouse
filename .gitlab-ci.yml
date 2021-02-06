@@ -1,0 +1,15 @@
+image: nexus.asta.ir:4000/asta/maven:3.6.3
+variables:
+  CATALINA_HOME: "/builds/CATALINA_HOME"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS clean compile
+  except:
+    - tags
