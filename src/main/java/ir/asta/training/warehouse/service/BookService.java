@@ -29,11 +29,12 @@ public class BookService {
                 BookService.class.getSimpleName(),
                 BookDto.class.getSimpleName(),
                 bookDto));
-        bookDao.save(BookEntity.builder()
-                             .title(bookDto.getTitle())
-                             .isbn10(bookDto.getIsbn10())
-                             .isbn13(bookDto.getIsbn13())
-                             .build());
+        final BookEntity bookEntity = BookEntity.builder()
+                .title(bookDto.getTitle())
+                .isbn10(bookDto.getIsbn10())
+                .isbn13(bookDto.getIsbn13())
+                .build();
+        bookDao.save(bookEntity);
         return Response.noContent().build();
     }
 }
