@@ -23,7 +23,7 @@ public class BookService {
     }
 
     @POST
-    public Response postBook(BookDto bookDto) {
+    public Response save(BookDto bookDto) {
         log.info(String.format("Request received to %s for %s = %s",
                 BookService.class.getSimpleName(),
                 BookDto.class.getSimpleName(),
