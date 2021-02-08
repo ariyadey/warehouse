@@ -2,6 +2,7 @@ package ir.asta.training.warehouse.service;
 
 import ir.asta.training.warehouse.dao.BookDao;
 import ir.asta.training.warehouse.dto.BookDto;
+import ir.asta.training.warehouse.entity.BookEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,11 @@ public class BookService {
                 BookService.class.getSimpleName(),
                 BookDto.class.getSimpleName(),
                 bookDto));
+        bookDao.save(BookEntity.builder()
+                             .title(bookDto.getTitle())
+                             .isbn10(bookDto.getIsbn10())
+                             .isbn13(bookDto.getIsbn13())
+                             .build());
         return Response.noContent().build();
     }
 }
