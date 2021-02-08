@@ -59,7 +59,11 @@ class BookServiceIntegrationTest {
                 .isbn13("7912389435659")
                 .price(BigDecimal.valueOf(25.5))
                 .build()));
-
+        assertEquals(Status.NO_CONTENT, getStatus(BookDto
+                .builder()
+                .isbn10("1979100316")
+                .price(BigDecimal.valueOf(99.99))
+                .build()));
     }
 
     private Response.StatusType getStatus(BookDto bookDto) {
