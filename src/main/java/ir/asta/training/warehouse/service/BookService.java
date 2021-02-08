@@ -33,6 +33,7 @@ public class BookService {
                 .title(bookDto.getTitle())
                 .isbn10(bookDto.getIsbn10())
                 .isbn13(bookDto.getIsbn13())
+                .price(bookDto.getPrice())
                 .build();
         bookDao.save(bookEntity);
         return Response.noContent().build();
