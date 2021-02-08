@@ -54,13 +54,14 @@ class BookServiceIntegrationTest {
                 .build()));
         assertEquals(Status.NO_CONTENT, getStatus(BookDto
                 .builder()
-                .title("Shaahnameh")
+                .title("Shahnameh")
                 .isbn10("0315651230")
                 .isbn13("7912389435659")
-                .price(BigDecimal.valueOf(25.5))
+                .price(BigDecimal.valueOf(55.55))
                 .build()));
         assertEquals(Status.NO_CONTENT, getStatus(BookDto
                 .builder()
+                .title(null)
                 .isbn10("1979100316")
                 .price(BigDecimal.valueOf(99.99))
                 .build()));
