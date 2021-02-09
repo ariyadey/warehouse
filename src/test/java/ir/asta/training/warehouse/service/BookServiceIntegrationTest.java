@@ -13,6 +13,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.StatusType;
 import java.math.BigDecimal;
 
 import static javax.ws.rs.core.Response.Status;
@@ -38,28 +39,22 @@ class BookServiceIntegrationTest {
 
     @Test
     void testPostBook() {
-        assertEquals(Status.NO_CONTENT, getStatus(BookDto
+        final BookDto dto = BookDto
                 .builder()
-                .title("Animal Farm")
-                .isbn10("7594651230")
-                .isbn13("7954613054894")
-                .price(BigDecimal.valueOf(30))
-                .build()));
-        assertEquals(Status.NO_CONTENT, getStatus(BookDto
-                .builder()
-                .title("The Subtle Art of Not Giving a Fuck")
-                .isbn10("7532651230")
-                .isbn13("7310579103731")
-                .price(BigDecimal.valueOf(25.5))
-                .build()));
-        assertEquals(Status.NO_CONTENT, getStatus(BookDto
-                .builder()
-                .title("Shaahnameh")
+                .title("Shahnameh")
                 .isbn10("0315651230")
                 .isbn13("7912389435659")
-                .price(BigDecimal.valueOf(25.5))
-                .build()));
+                .price(BigDecimal.valueOf(55.55))
+                .build();
+        assertEquals(Status.NO_CONTENT, getStatus(dto));
 
+        final BookDto dtoWithNullFields = BookDto
+                .builder()
+                .title(null)
+                .isbn10("1979100316")
+                .price(BigDecimal.valueOf(99.99))
+                .build();
+        assertEquals(Status.NO_CONTENT, getStatus(dtoWithNullFields));
     }
 
     private Response.StatusType getStatus(BookDto bookDto) {
