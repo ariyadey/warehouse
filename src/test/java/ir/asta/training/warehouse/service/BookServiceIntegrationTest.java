@@ -97,7 +97,7 @@ class BookServiceIntegrationTest {
                 .price(mockPrice)
                 .build();
 
-        assertFailsSaving(ExtendedStatus.UNPROCESSABLE_ENTITY, dto);
+        assertThrowsWhenSaving(ExtendedStatus.UNPROCESSABLE_ENTITY, dto);
     }
 
     @Test
@@ -108,7 +108,7 @@ class BookServiceIntegrationTest {
                 .isbn13(itBookNonExistingIsbn13)
                 .build();
 
-        assertFailsSaving(Status.NOT_FOUND, dto);
+        assertThrowsWhenSaving(Status.NOT_FOUND, dto);
     }
 
     private void assertSaves(BookDto dto) {
@@ -137,7 +137,7 @@ class BookServiceIntegrationTest {
         assertEquals(expectedDto, getResponse.readEntity(BookDto.class));
     }
 
-    private void assertFailsSaving(Response.StatusType expectedStatus, BookDto dto) {
+    private void assertThrowsWhenSaving(Response.StatusType expectedStatus, BookDto dto) {
         final Response postResponse = client
                 .target(String.format("http://localhost:%d/warehouse/api/book", port))
                 .request(MediaType.TEXT_PLAIN)
