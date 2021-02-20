@@ -92,7 +92,7 @@ class BookServiceIntegrationTest {
         final BookDto dto = BookDto
                 .builder()
                 .title(sampleTitle)
-                .isbn10(validIsbn10)
+                .isbn10(invalidIsbn10)
                 .isbn13(invalidIsbn13)
                 .price(samplePrice)
                 .build();
