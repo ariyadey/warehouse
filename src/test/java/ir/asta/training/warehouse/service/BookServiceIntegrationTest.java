@@ -143,6 +143,6 @@ class BookServiceIntegrationTest {
                 .request(MediaType.TEXT_PLAIN)
                 .post(Entity.json(dto));
 
-        assertEquals(expectedStatus, postResponse.getStatusInfo());
+        assertEquals(expectedStatus.getStatusCode(), postResponse.getStatus());
     }
 }
