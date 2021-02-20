@@ -19,15 +19,11 @@ public class BookEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(nullable = false)
     private String title;
 
-    @Column(unique = true, nullable = false)
     private String isbn10;
 
-    @Column(unique = true, nullable = false)
     private String isbn13;
 
-    @Column(nullable = false)
     private BigDecimal price;
 }
