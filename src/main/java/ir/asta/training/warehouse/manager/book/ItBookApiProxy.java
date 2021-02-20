@@ -13,7 +13,13 @@ import static java.lang.String.format;
 
 @Component
 public class ItBookApiProxy {
-    private Client client;
+
+    Client client;
+
+    @Autowired
+    public ItBookApiProxy(Client client) {
+        this.client = client;
+    }
 
     public ItBookApiDto load(String isbn13) {
         if (client == null) {
