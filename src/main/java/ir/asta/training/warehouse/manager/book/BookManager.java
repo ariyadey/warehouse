@@ -2,12 +2,15 @@ package ir.asta.training.warehouse.manager.book;
 
 import ir.asta.training.warehouse.dao.BookDao;
 import ir.asta.training.warehouse.dto.BookDto;
+import ir.asta.training.warehouse.dto.ItBookApiDto;
 import ir.asta.training.warehouse.manager.book.exception.BookNotProcessableException;
 import ir.asta.training.warehouse.mapper.BookMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 import static ir.asta.training.warehouse.util.ReflectionUtil.*;
 
@@ -39,13 +42,22 @@ public class BookManager {
     public long save(BookDto dto) {
         validateDto(dto);
         long entityId;
-        // TODO: 20/02/2021 Don't overrdie given data
         if (hasNullField(dto)) {
-            entityId = dao.save(mapper.toEntity(itBookApiProxy.load(dto.getIsbn13())));
+            entityId = dao.save(mapper.toEntity(fillInfo(dto)));
         } else {
             entityId = dao.save(mapper.toEntity(dto));
         }
         return entityId;
+    }
+
+    private BookDto fillInfo(BookDto dto) {
+        final BookDto apiDto = mapper.toDto(itBookApiProxy.load(dto.getIsbn13()));
+        return BookDto.builder()
+                .title(dto.getTitle() == null ? apiDto.getTitle() : dto.getTitle())
+                .isbn10(dto.getIsbn10() == null ? apiDto.getIsbn10() : dto.getIsbn10())
+                .isbn13(dto.getIsbn13())
+                .price(dto.getPrice() == null ? apiDto.getPrice() : dto.getPrice())
+                .build();
     }
 
     private void validateDto(BookDto dto) {
