@@ -1,7 +1,7 @@
 package ir.asta.training.warehouse.mapper;
 
-import ir.asta.training.warehouse.dto.ItBookApiDto;
 import ir.asta.training.warehouse.dto.BookDto;
+import ir.asta.training.warehouse.dto.ItBookApiDto;
 import ir.asta.training.warehouse.entity.BookEntity;
 import org.springframework.stereotype.Component;
 
@@ -16,15 +16,6 @@ public class BookMapper {
                 .isbn10(dto.getIsbn10())
                 .isbn13(dto.getIsbn13())
                 .price(dto.getPrice())
-                .build();
-    }
-
-    public BookEntity toEntity(ItBookApiDto dto) {
-        return BookEntity.builder()
-                .title(dto.getTitle())
-                .isbn10(dto.getIsbn10())
-                .isbn13(dto.getIsbn13())
-                .price(BigDecimal.valueOf(Double.parseDouble(dto.getPrice().replace('$', ' '))))
                 .build();
     }
 
