@@ -6,13 +6,16 @@ import ir.asta.training.warehouse.manager.book.exception.BookNotFoundException;
 import ir.asta.training.warehouse.manager.book.exception.BookNotProcessableException;
 import ir.asta.training.warehouse.manager.book.exception.ItBookServiceUnavailableException;
 import lombok.extern.slf4j.Slf4j;
+import org.glassfish.jersey.server.Uri;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
 import static ir.asta.training.warehouse.service.ExtendedStatus.UNPROCESSABLE_ENTITY;
@@ -46,11 +49,14 @@ public class BookService {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response save(BookDto bookDto) {
+    public Response save(@Context UriInfo uriInfo, BookDto bookDto) {
         ResponseBuilder response;
         try {
             final long id = manager.save(bookDto);
-            response = Response.created(URI.create(String.valueOf(id)));
+            response = Response.created(uriInfo
+                    .getAbsolutePathBuilder()
+                    .path(String.valueOf(id))
+                    .build());
         } catch (BookNotProcessableException exception) {
             response = Response.status(UNPROCESSABLE_ENTITY);
         } catch (BookNotFoundException exception) {
