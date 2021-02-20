@@ -4,7 +4,6 @@ import ir.asta.training.warehouse.dto.BookDto;
 import ir.asta.training.warehouse.manager.book.exception.BookNotFoundException;
 import ir.asta.training.warehouse.manager.book.exception.BookNotProcessableException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,9 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest
 @AutoConfigureTestDatabase
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BookManagerIntegrationTest {
 
     private final String sampleTitle = "RESTful Java with JAX-RS 2.0, 2nd Edition";
@@ -62,7 +60,6 @@ class BookManagerIntegrationTest {
     void Should_SaveBook_When_Isbn13Exists_And_Isbn10IsNotGiven() {
         final BookDto dto = BookDto
                 .builder()
-                .title(null)
                 .isbn13(itBookExistingIsbn13)
                 .price(samplePrice)
                 .build();
@@ -103,7 +100,7 @@ class BookManagerIntegrationTest {
                 .isbn13(dto.getIsbn13() == null ? itBookExistingIsbn13 : dto.getIsbn13())
                 .price(dto.getPrice() == null ? samplePrice : dto.getPrice())
                 .build();
-        final BookDto actualDto = manager.load(String.valueOf(entityId));
+        final BookDto actualDto = manager.load(entityId);
 
         assertEquals(expectedDto, actualDto);
     }

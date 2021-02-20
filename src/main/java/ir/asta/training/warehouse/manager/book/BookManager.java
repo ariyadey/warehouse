@@ -4,10 +4,12 @@ import ir.asta.training.warehouse.dao.BookDao;
 import ir.asta.training.warehouse.dto.BookDto;
 import ir.asta.training.warehouse.manager.book.exception.BookNotProcessableException;
 import ir.asta.training.warehouse.mapper.BookMapper;
-import ir.asta.training.warehouse.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import static ir.asta.training.warehouse.util.ReflectionUtil.*;
 
 @Slf4j
 @Component
@@ -28,26 +30,27 @@ public class BookManager {
         this.isbnValidator = isbnValidator;
     }
 
-    public BookDto load(String id) {
-        return mapper.toDto(dao.load(Long.parseLong(id)));
+    @Transactional
+    public BookDto load(long id) {
+        return mapper.toDto(dao.load(id));
     }
 
     public long save(BookDto dto) {
+        validateDto(dto);
         long entityId;
-        if (isDtoValid(dto)) {
-            if (!ReflectionUtil.hasNullField(dto)) {
-                entityId = dao.save(mapper.toEntity(dto));
-            } else {
-                entityId = dao.save(mapper.toEntity(itBookApiProxy.load(dto.getIsbn13())));
-            }
+        // TODO: 20/02/2021 Don't overrdie given data
+        if (hasNullField(dto)) {
+            entityId = dao.save(mapper.toEntity(itBookApiProxy.load(dto.getIsbn13())));
         } else {
-            throw new BookNotProcessableException();
+            entityId = dao.save(mapper.toEntity(dto));
         }
         return entityId;
     }
 
-    private boolean isDtoValid(BookDto dto) {
-        return isbnValidator.isIsbn13Valid(dto.getIsbn13()) &&
-               ((dto.getIsbn10() == null) || isbnValidator.isIsbn10Valid(dto.getIsbn10()));
+    private void validateDto(BookDto dto) {
+        if (!(isbnValidator.isIsbn13Valid(dto.getIsbn13()) &&
+              ((dto.getIsbn10() == null) || isbnValidator.isIsbn10Valid(dto.getIsbn10())))) {
+            throw new BookNotProcessableException();
+        }
     }
 }
