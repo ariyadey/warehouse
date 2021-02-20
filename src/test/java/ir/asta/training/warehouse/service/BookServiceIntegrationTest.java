@@ -112,12 +112,6 @@ class BookServiceIntegrationTest {
     }
 
     private void assertSaves(BookDto dto) {
-        final BookDto expectedDto = BookDto.builder()
-                .title(dto.getTitle() == null ? sampleTitle : dto.getTitle())
-                .isbn10(dto.getIsbn10() == null ? validIsbn10 : dto.getIsbn10())
-                .isbn13(dto.getIsbn13() == null ? itBookExistingIsbn13 : dto.getIsbn13())
-                .price(dto.getPrice() == null ? samplePrice : dto.getPrice())
-                .build();
         final Response postResponse = client
                 .target(String.format("http://localhost:%d/warehouse/api/book", port))
                 .request(MediaType.TEXT_PLAIN)
@@ -132,6 +126,12 @@ class BookServiceIntegrationTest {
                 .path(postResponse.readEntity(String.class))
                 .request(MediaType.APPLICATION_JSON)
                 .get();
+        final BookDto expectedDto = BookDto.builder()
+                .title(dto.getTitle() == null ? sampleTitle : dto.getTitle())
+                .isbn10(dto.getIsbn10() == null ? validIsbn10 : dto.getIsbn10())
+                .isbn13(dto.getIsbn13() == null ? itBookExistingIsbn13 : dto.getIsbn13())
+                .price(dto.getPrice() == null ? samplePrice : dto.getPrice())
+                .build();
 
         assertEquals(Status.OK, getResponse.getStatusInfo());
         assertEquals(expectedDto, getResponse.readEntity(dto.getClass()));
