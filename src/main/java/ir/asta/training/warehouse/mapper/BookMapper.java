@@ -36,4 +36,13 @@ public class BookMapper {
                 .price(entity.getPrice())
                 .build();
     }
+
+    public BookDto toDto(ItBookApiDto dto) {
+        return BookDto.builder()
+                .title(dto.getTitle())
+                .isbn10(dto.getIsbn10())
+                .isbn13(dto.getIsbn13())
+                .price(BigDecimal.valueOf(Double.parseDouble(dto.getPrice().replace('$', ' '))))
+                .build();
+    }
 }
