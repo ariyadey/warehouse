@@ -15,7 +15,6 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
-import java.net.URI;
 
 import static javax.ws.rs.core.Response.Status;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,8 +33,8 @@ class BookServiceIntegrationTest {
     private final String invalidIsbn10 = "1449361340";
     private final String validIsbn13 = itBookNonExistingIsbn13;
     private final String invalidIsbn13 = "9781449361340";
-    private final BigDecimal originalPrice = BigDecimal.valueOf(22.00);
-    private final BigDecimal mockPrice = BigDecimal.valueOf(1.000);
+    private final BigDecimal originalPrice = new BigDecimal("22.00");
+    private final BigDecimal mockPrice = new BigDecimal("1.00");
 
     @LocalServerPort
     private int port;
@@ -120,10 +119,8 @@ class BookServiceIntegrationTest {
         assertEquals(Status.CREATED, postResponse.getStatusInfo());
 
 
-//        assertEquals(URI.create(String.format("http://localhost:%s/warehouse/api/1", port)), postResponse.getLocation());
         final Response getResponse = client
-                .target(String.format("http://localhost:%s/warehouse/api/1", port))
-                .path("1")
+                .target(postResponse.getLocation())
                 .request(MediaType.APPLICATION_JSON)
                 .get();
         final BookDto expectedDto = BookDto.builder()
