@@ -4,6 +4,7 @@ import ir.asta.training.warehouse.dto.BookDto;
 import ir.asta.training.warehouse.manager.book.BookManager;
 import ir.asta.training.warehouse.manager.book.exception.BookNotFoundException;
 import ir.asta.training.warehouse.manager.book.exception.BookNotProcessableException;
+import ir.asta.training.warehouse.manager.book.exception.ItBookServiceUnavailableException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,6 +54,8 @@ public class BookService {
             response = Response.status(UNPROCESSABLE_ENTITY).build();
         } catch (BookNotFoundException exception) {
             response = Response.status(NOT_FOUND).build();
+        } catch (ItBookServiceUnavailableException exception) {
+            response = Response.status(SERVICE_UNAVAILABLE).build();
         }
         return response;
     }

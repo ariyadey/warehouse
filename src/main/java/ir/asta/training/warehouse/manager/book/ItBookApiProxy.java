@@ -2,6 +2,7 @@ package ir.asta.training.warehouse.manager.book;
 
 import ir.asta.training.warehouse.dto.ItBookApiDto;
 import ir.asta.training.warehouse.manager.book.exception.BookNotFoundException;
+import ir.asta.training.warehouse.manager.book.exception.ItBookServiceUnavailableException;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.client.Client;
@@ -10,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 
 import static java.lang.String.format;
 
-// TODO: 19/02/2021 What about external problems such as network timeouts?
 @Component
 public class ItBookApiProxy {
     private Client client;
@@ -20,15 +20,24 @@ public class ItBookApiProxy {
             client = ClientBuilder.newClient();
         }
 
-        final ItBookApiDto dto = client
-                .target(format("https://api.itbook.store/1.0/books/%s", isbn13))
-                .request(MediaType.APPLICATION_JSON)
-                .get(ItBookApiDto.class);
+        ItBookApiDto dto;
+        try {
+            dto = client
+                    .target(format("https://api.itbook.store/1.0/books/%s", isbn13))
+                    .request(MediaType.APPLICATION_JSON)
+                    .get(ItBookApiDto.class);
+        } catch (RuntimeException exception) {
+            dto = null;
+        }
 
-        if (dto.getError().equals("0")) {
-            return dto;
+        if (dto != null) {
+            if (dto.getError().equals("0")) {
+                return dto;
+            } else {
+                throw new BookNotFoundException();
+            }
         } else {
-            throw new BookNotFoundException();
+            throw new ItBookServiceUnavailableException();
         }
     }
 }
