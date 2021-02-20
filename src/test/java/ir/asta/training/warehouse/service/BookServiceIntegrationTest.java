@@ -8,7 +8,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -16,23 +15,27 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
+import java.net.URI;
 
 import static javax.ws.rs.core.Response.Status;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BookServiceIntegrationTest {
 
-    private final String sampleTitle = "Securing DevOps";
-    private final String itBookExistingIsbn13 = "9781617294136";
+    private final String originalTitle = "RESTful Java with JAX-RS 2.0, 2nd Edition";
+    private final String mockTitle = "This is a fake title for testing purposes";
+    private final String itBookExistingIsbn13 = "9781449361341";
     private final String itBookNonExistingIsbn13 = "9786227233797";
-    private final String validIsbn10 = "1617294136";
+    private final String validIsbn10 = "144936134X";
     private final String invalidIsbn10 = "1449361340";
     private final String validIsbn13 = itBookNonExistingIsbn13;
     private final String invalidIsbn13 = "9781449361340";
-    private final BigDecimal samplePrice = new BigDecimal("39.00");
+    private final BigDecimal originalPrice = BigDecimal.valueOf(22.00);
+    private final BigDecimal mockPrice = BigDecimal.valueOf(1.000);
 
     @LocalServerPort
     private int port;
@@ -53,10 +56,10 @@ class BookServiceIntegrationTest {
     void Should_SaveBook_When_BothIsbnsAreValid_And_OtherFieldsCompleted() {
         final BookDto dto = BookDto
                 .builder()
-                .title(sampleTitle)
+                .title(mockTitle)
                 .isbn10(validIsbn10)
                 .isbn13(validIsbn13)
-                .price(samplePrice)
+                .price(mockPrice)
                 .build();
 
         assertSaves(dto);
@@ -68,7 +71,6 @@ class BookServiceIntegrationTest {
                 .builder()
                 .isbn10(validIsbn10)
                 .isbn13(itBookExistingIsbn13)
-                .price(null)
                 .build();
 
         assertSaves(dto);
@@ -78,9 +80,8 @@ class BookServiceIntegrationTest {
     void Should_SaveBook_When_Isbn13Exists_And_Isbn10IsNotGiven() {
         final BookDto dto = BookDto
                 .builder()
-                .title(null)
                 .isbn13(itBookExistingIsbn13)
-                .price(samplePrice)
+                .price(mockPrice)
                 .build();
 
         assertSaves(dto);
@@ -90,10 +91,10 @@ class BookServiceIntegrationTest {
     void ShouldNot_SaveBook_When_OneOfIsbnsAreInvalid() {
         final BookDto dto = BookDto
                 .builder()
-                .title(sampleTitle)
+                .title(mockTitle)
                 .isbn10(invalidIsbn10)
                 .isbn13(invalidIsbn13)
-                .price(samplePrice)
+                .price(mockPrice)
                 .build();
 
         assertFailsSaving(ExtendedStatus.UNPROCESSABLE_ENTITY, dto);
@@ -113,23 +114,23 @@ class BookServiceIntegrationTest {
     private void assertSaves(BookDto dto) {
         final Response postResponse = client
                 .target(String.format("http://localhost:%d/warehouse/api/book", port))
-                .request(MediaType.TEXT_PLAIN)
+                .request()
                 .post(Entity.json(dto));
 
         assertEquals(Status.CREATED, postResponse.getStatusInfo());
-        assertTrue(postResponse::hasEntity);
 
 
+//        assertEquals(URI.create(String.format("http://localhost:%s/warehouse/api/1", port)), postResponse.getLocation());
         final Response getResponse = client
-                .target(String.format("http://localhost:%d/warehouse/api/book", port))
-                .path(postResponse.readEntity(String.class))
+                .target(String.format("http://localhost:%s/warehouse/api/1", port))
+                .path("1")
                 .request(MediaType.APPLICATION_JSON)
                 .get();
         final BookDto expectedDto = BookDto.builder()
-                .title(dto.getTitle() == null ? sampleTitle : dto.getTitle())
+                .title(dto.getTitle() == null ? originalTitle : dto.getTitle())
                 .isbn10(dto.getIsbn10() == null ? validIsbn10 : dto.getIsbn10())
                 .isbn13(dto.getIsbn13() == null ? itBookExistingIsbn13 : dto.getIsbn13())
-                .price(dto.getPrice() == null ? samplePrice : dto.getPrice())
+                .price(dto.getPrice() == null ? originalPrice : dto.getPrice())
                 .build();
 
         assertEquals(Status.OK, getResponse.getStatusInfo());

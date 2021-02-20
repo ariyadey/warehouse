@@ -19,14 +19,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @AutoConfigureTestDatabase
 class BookManagerIntegrationTest {
 
-    private final String sampleTitle = "RESTful Java with JAX-RS 2.0, 2nd Edition";
+    private final String originalTitle = "RESTful Java with JAX-RS 2.0, 2nd Edition";
+    private final String mockTitle = "This is a fake title for testing purposes";
     private final String itBookExistingIsbn13 = "9781449361341";
     private final String itBookNonExistingIsbn13 = "9786227233797";
     private final String validIsbn10 = "144936134X";
     private final String invalidIsbn10 = "1449361340";
     private final String validIsbn13 = itBookNonExistingIsbn13;
     private final String invalidIsbn13 = "9781449361340";
-    private final BigDecimal samplePrice = BigDecimal.valueOf(22.0);
+    private final BigDecimal originalPrice = BigDecimal.valueOf(22.00);
+    private final BigDecimal mockPrice = BigDecimal.valueOf(1.000);
 
     @Autowired
     private BookManager manager;
@@ -35,10 +37,10 @@ class BookManagerIntegrationTest {
     void Should_SaveBook_When_BothIsbnsAreValid_And_OtherFieldsCompleted() {
         final BookDto dto = BookDto
                 .builder()
-                .title(sampleTitle)
+                .title(mockTitle)
                 .isbn10(validIsbn10)
                 .isbn13(validIsbn13)
-                .price(samplePrice)
+                .price(mockPrice)
                 .build();
 
         assertSaves(dto);
@@ -50,7 +52,6 @@ class BookManagerIntegrationTest {
                 .builder()
                 .isbn10(validIsbn10)
                 .isbn13(itBookExistingIsbn13)
-                .price(null)
                 .build();
 
         assertSaves(dto);
@@ -61,7 +62,7 @@ class BookManagerIntegrationTest {
         final BookDto dto = BookDto
                 .builder()
                 .isbn13(itBookExistingIsbn13)
-                .price(samplePrice)
+                .price(mockPrice)
                 .build();
 
         assertSaves(dto);
@@ -71,10 +72,10 @@ class BookManagerIntegrationTest {
     void ShouldNot_SaveBook_When_OneOfIsbnsAreInvalid() {
         final BookDto dto = BookDto
                 .builder()
-                .title(sampleTitle)
+                .title(mockTitle)
                 .isbn10(invalidIsbn10)
                 .isbn13(invalidIsbn13)
-                .price(samplePrice)
+                .price(mockPrice)
                 .build();
 
         assertThrows(BookNotProcessableException.class, () -> manager.save(dto));
@@ -95,10 +96,10 @@ class BookManagerIntegrationTest {
         final long entityId = manager.save(dto);
 
         final BookDto expectedDto = BookDto.builder()
-                .title(dto.getTitle() == null ? sampleTitle : dto.getTitle())
+                .title(dto.getTitle() == null ? originalTitle : dto.getTitle())
                 .isbn10(dto.getIsbn10() == null ? validIsbn10 : dto.getIsbn10())
                 .isbn13(dto.getIsbn13() == null ? itBookExistingIsbn13 : dto.getIsbn13())
-                .price(dto.getPrice() == null ? samplePrice : dto.getPrice())
+                .price(dto.getPrice() == null ? originalPrice : dto.getPrice())
                 .build();
         final BookDto actualDto = manager.load(entityId);
 
