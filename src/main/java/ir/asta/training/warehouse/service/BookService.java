@@ -10,11 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
-import static ir.asta.training.warehouse.service.ExtendedStatus.*;
-import static javax.ws.rs.core.Response.Status.*;
+import static ir.asta.training.warehouse.service.ExtendedStatus.UNPROCESSABLE_ENTITY;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 @Slf4j
 @Component
@@ -31,32 +35,31 @@ public class BookService {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response load(@PathParam("id") String id) {
-        Response response;
+    public Response load(@PathParam("id") long id) {
+        ResponseBuilder response;
         try {
             final BookDto dto = manager.load(id);
-            response = Response.ok(dto).build();
+            response = Response.ok(dto);
         } catch (BookNotFoundException exception) {
-            response = Response.status(NOT_FOUND).build();
+            response = Response.status(NOT_FOUND);
         }
-        return response;
+        return response.build();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response save(BookDto bookDto) {
-        Response response;
+    public Response save(@Context UriInfo uriInfo, BookDto bookDto) {
+        ResponseBuilder response;
         try {
             final long id = manager.save(bookDto);
-            response = Response.status(CREATED).entity(id).build();
+            response = Response.created(URI.create(String.valueOf(id)));
         } catch (BookNotProcessableException exception) {
-            response = Response.status(UNPROCESSABLE_ENTITY).build();
+            response = Response.status(UNPROCESSABLE_ENTITY);
         } catch (BookNotFoundException exception) {
-            response = Response.status(NOT_FOUND).build();
+            response = Response.status(NOT_FOUND);
         } catch (ItBookServiceUnavailableException exception) {
-            response = Response.status(SERVICE_UNAVAILABLE).build();
+            response = Response.serverError();
         }
-        return response;
+        return response.build();
     }
 }

@@ -35,6 +35,7 @@ public class BookManager {
         return mapper.toDto(dao.load(id));
     }
 
+    @Transactional
     public long save(BookDto dto) {
         validateDto(dto);
         long entityId;

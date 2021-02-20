@@ -4,7 +4,6 @@ import ir.asta.training.warehouse.entity.BookEntity;
 import ir.asta.training.warehouse.manager.book.exception.BookNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,7 +15,6 @@ public class BookDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Transactional
     public long save(BookEntity entity) {
         entityManager.persist(entity);
         return entity.getId();
