@@ -33,7 +33,7 @@ class BookServiceIntegrationTest {
     private final String invalidIsbn10 = "1449361340";
     private final String validIsbn13 = itBookNonExistingIsbn13;
     private final String invalidIsbn13 = "9781449361340";
-    private final BigDecimal samplePrice = BigDecimal.valueOf(39.99);
+    private final BigDecimal samplePrice = new BigDecimal("39.00");
 
     @LocalServerPort
     private int port;
