@@ -26,14 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BookServiceIntegrationTest {
 
-    private final String sampleTitle = "RESTful Java with JAX-RS 2.0, 2nd Edition";
-    private final String itBookExistingIsbn13 = "9781449361341";
+    private final String sampleTitle = "Securing DevOps";
+    private final String itBookExistingIsbn13 = "9781617294136";
     private final String itBookNonExistingIsbn13 = "9786227233797";
-    private final String validIsbn10 = "144936134X";
+    private final String validIsbn10 = "1617294136";
     private final String invalidIsbn10 = "1449361340";
     private final String validIsbn13 = itBookNonExistingIsbn13;
     private final String invalidIsbn13 = "9781449361340";
-    private final BigDecimal samplePrice = BigDecimal.valueOf(22.0);
+    private final BigDecimal samplePrice = BigDecimal.valueOf(39.99);
 
     @LocalServerPort
     private int port;
