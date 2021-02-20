@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
-@Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BookServiceIntegrationTest {
 
