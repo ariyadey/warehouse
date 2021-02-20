@@ -134,7 +134,7 @@ class BookServiceIntegrationTest {
                 .build();
 
         assertEquals(Status.OK, getResponse.getStatusInfo());
-        assertEquals(expectedDto, getResponse.readEntity(dto.getClass()));
+        assertEquals(expectedDto, getResponse.readEntity(BookDto.class));
     }
 
     private void assertFailsSaving(Response.StatusType expectedStatus, BookDto dto) {
