@@ -5,27 +5,40 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.StatusType;
 import java.math.BigDecimal;
 
 import static javax.ws.rs.core.Response.Status;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase
+@Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BookServiceIntegrationTest {
 
+    private final String sampleTitle = "RESTful Java with JAX-RS 2.0, 2nd Edition";
+    private final String itBookExistingIsbn13 = "9781449361341";
+    private final String itBookNonExistingIsbn13 = "9786227233797";
+    private final String validIsbn10 = "144936134X";
+    private final String invalidIsbn10 = "1449361340";
+    private final String validIsbn13 = itBookNonExistingIsbn13;
+    private final String invalidIsbn13 = "9781449361340";
+    private final BigDecimal samplePrice = BigDecimal.valueOf(22.0);
+
     @LocalServerPort
-    int port;
-    Client client;
+    private int port;
+
+    private Client client;
 
     @BeforeAll
     void init() {
@@ -38,30 +51,98 @@ class BookServiceIntegrationTest {
     }
 
     @Test
-    void testPostBook() {
+    void Should_SaveBook_When_BothIsbnsAreValid_And_OtherFieldsCompleted() {
         final BookDto dto = BookDto
                 .builder()
-                .title("Shahnameh")
-                .isbn10("0315651230")
-                .isbn13("7912389435659")
-                .price(BigDecimal.valueOf(55.55))
+                .title(sampleTitle)
+                .isbn10(validIsbn10)
+                .isbn13(validIsbn13)
+                .price(samplePrice)
                 .build();
-        assertEquals(Status.NO_CONTENT, getStatus(dto));
 
-        final BookDto dtoWithNullFields = BookDto
-                .builder()
-                .title(null)
-                .isbn10("1979100316")
-                .price(BigDecimal.valueOf(99.99))
-                .build();
-        assertEquals(Status.NO_CONTENT, getStatus(dtoWithNullFields));
+        assertSaves(dto);
     }
 
-    private Response.StatusType getStatus(BookDto bookDto) {
-        return client
+    @Test
+    void Should_SaveBook_When_Isbn13Exists_And_Isbn10IsValid_And_OtherFieldsNotCompleted() {
+        final BookDto dto = BookDto
+                .builder()
+                .isbn10(validIsbn10)
+                .isbn13(itBookExistingIsbn13)
+                .price(null)
+                .build();
+
+        assertSaves(dto);
+    }
+
+    @Test
+    void Should_SaveBook_When_Isbn13Exists_And_Isbn10IsNotGiven() {
+        final BookDto dto = BookDto
+                .builder()
+                .title(null)
+                .isbn13(itBookExistingIsbn13)
+                .price(samplePrice)
+                .build();
+
+        assertSaves(dto);
+    }
+
+    @Test
+    void ShouldNot_SaveBook_When_OneOfIsbnsAreInvalid() {
+        final BookDto dto = BookDto
+                .builder()
+                .title(sampleTitle)
+                .isbn10(validIsbn10)
+                .isbn13(invalidIsbn13)
+                .price(samplePrice)
+                .build();
+
+        assertFailsSaving(ExtendedStatus.UNPROCESSABLE_ENTITY, dto);
+    }
+
+    @Test
+    void ShouldNot_SaveBook_When_Isbn13DoesNotExist_And_Isbn10IsNotInvalid_And_OtherFieldsNotCompleted() {
+        final BookDto dto = BookDto
+                .builder()
+                .isbn10(validIsbn10)
+                .isbn13(itBookNonExistingIsbn13)
+                .build();
+
+        assertFailsSaving(Status.NOT_FOUND, dto);
+    }
+
+    private void assertSaves(BookDto dto) {
+        final BookDto expectedDto = BookDto.builder()
+                .title(dto.getTitle() == null ? sampleTitle : dto.getTitle())
+                .isbn10(dto.getIsbn10() == null ? validIsbn10 : dto.getIsbn10())
+                .isbn13(dto.getIsbn13() == null ? itBookExistingIsbn13 : dto.getIsbn13())
+                .price(dto.getPrice() == null ? samplePrice : dto.getPrice())
+                .build();
+        final Response postResponse = client
                 .target(String.format("http://localhost:%d/warehouse/api/book", port))
                 .request(MediaType.TEXT_PLAIN)
-                .post(Entity.json(bookDto))
-                .getStatusInfo();
+                .post(Entity.json(dto));
+
+        assertEquals(Status.CREATED, postResponse.getStatusInfo());
+        assertTrue(postResponse::hasEntity);
+
+
+        final Response getResponse = client
+                .target(String.format("http://localhost:%d/warehouse/api/book", port))
+                .path(postResponse.readEntity(String.class))
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+
+        assertEquals(Status.OK, getResponse.getStatusInfo());
+        assertEquals(expectedDto, getResponse.readEntity(dto.getClass()));
+    }
+
+    private void assertFailsSaving(Response.StatusType expectedStatus, BookDto dto) {
+        final Response postResponse = client
+                .target(String.format("http://localhost:%d/warehouse/api/book", port))
+                .request(MediaType.TEXT_PLAIN)
+                .post(Entity.json(dto));
+
+        assertEquals(expectedStatus, postResponse.getStatusInfo());
     }
 }
