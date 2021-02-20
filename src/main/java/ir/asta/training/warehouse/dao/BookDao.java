@@ -1,6 +1,7 @@
 package ir.asta.training.warehouse.dao;
 
 import ir.asta.training.warehouse.entity.BookEntity;
+import ir.asta.training.warehouse.manager.book.exception.BookNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +17,16 @@ public class BookDao {
     private EntityManager entityManager;
 
     @Transactional
-    public void save(BookEntity bookEntity) {
-        log.info("going to save BookEntity to db :{}", bookEntity);
-        entityManager.persist(bookEntity);
-        log.info("book entity is saved to database. Id is : {}", bookEntity.getId());
+    public long save(BookEntity entity) {
+        entityManager.persist(entity);
+        return entity.getId();
+    }
+
+    public BookEntity load(long id) {
+        final BookEntity entity = entityManager.find(BookEntity.class, id);
+        if (entity == null) {
+            throw new BookNotFoundException();
+        }
+        return entity;
     }
 }
