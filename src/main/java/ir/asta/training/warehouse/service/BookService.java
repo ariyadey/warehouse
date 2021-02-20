@@ -4,9 +4,7 @@ import ir.asta.training.warehouse.dto.BookDto;
 import ir.asta.training.warehouse.manager.book.BookManager;
 import ir.asta.training.warehouse.manager.book.exception.BookNotFoundException;
 import ir.asta.training.warehouse.manager.book.exception.BookNotProcessableException;
-import ir.asta.training.warehouse.manager.book.exception.ItBookServiceUnavailableException;
 import lombok.extern.slf4j.Slf4j;
-import org.glassfish.jersey.server.Uri;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +14,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 
 import static ir.asta.training.warehouse.service.ExtendedStatus.UNPROCESSABLE_ENTITY;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
@@ -61,8 +58,6 @@ public class BookService {
             response = Response.status(UNPROCESSABLE_ENTITY);
         } catch (BookNotFoundException exception) {
             response = Response.status(NOT_FOUND);
-        } catch (ItBookServiceUnavailableException exception) {
-            response = Response.serverError();
         }
         return response.build();
     }
