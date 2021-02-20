@@ -10,11 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
 import static ir.asta.training.warehouse.service.ExtendedStatus.UNPROCESSABLE_ENTITY;
@@ -48,7 +46,7 @@ public class BookService {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response save(@Context UriInfo uriInfo, BookDto bookDto) {
+    public Response save(BookDto bookDto) {
         ResponseBuilder response;
         try {
             final long id = manager.save(bookDto);
