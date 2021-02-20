@@ -2,7 +2,6 @@ package ir.asta.training.warehouse.manager.book;
 
 import ir.asta.training.warehouse.dao.BookDao;
 import ir.asta.training.warehouse.dto.BookDto;
-import ir.asta.training.warehouse.dto.ItBookApiDto;
 import ir.asta.training.warehouse.manager.book.exception.BookNotProcessableException;
 import ir.asta.training.warehouse.mapper.BookMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -10,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-
-import static ir.asta.training.warehouse.util.ReflectionUtil.*;
+import static ir.asta.training.warehouse.util.ReflectionUtil.hasNullField;
 
 @Slf4j
 @Component
