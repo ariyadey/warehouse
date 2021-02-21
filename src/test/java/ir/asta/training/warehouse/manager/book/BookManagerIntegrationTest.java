@@ -1,18 +1,22 @@
 package ir.asta.training.warehouse.manager.book;
 
 import ir.asta.training.warehouse.dto.BookDto;
+import ir.asta.training.warehouse.dto.ItBookApiDto;
 import ir.asta.training.warehouse.manager.book.exception.BookNotFoundException;
 import ir.asta.training.warehouse.manager.book.exception.BookNotProcessableException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @Transactional
 @SpringBootTest
@@ -32,6 +36,9 @@ class BookManagerIntegrationTest {
 
     @Autowired
     private BookManager manager;
+
+    @MockBean
+    private ItBookApiProxy itBookApiProxy;
 
     @Test
     void Should_SaveBook_When_BothIsbnsAreValid_And_OtherFieldsCompleted() {
@@ -79,10 +86,12 @@ class BookManagerIntegrationTest {
                 .build();
 
         assertThrows(BookNotProcessableException.class, () -> manager.save(dto));
+        verify(itBookApiProxy, never()).load(anyString());
     }
 
     @Test
     void ShouldNot_SaveBook_When_Isbn13DoesNotExist_And_Isbn10IsNotInvalid_And_OtherFieldsNotCompleted() {
+        when(itBookApiProxy.load(anyString())).thenThrow(BookNotFoundException.class);
         final BookDto dto = BookDto
                 .builder()
                 .isbn10(validIsbn10)
@@ -93,7 +102,15 @@ class BookManagerIntegrationTest {
     }
 
     private void assertSaves(BookDto dto) {
+        when(itBookApiProxy.load(anyString())).thenReturn(ItBookApiDto.builder()
+                .title(originalTitle)
+                .isbn10(validIsbn10)
+                .isbn13(itBookExistingIsbn13)
+                .price(String.valueOf(originalPrice))
+                .build());
+
         final long entityId = manager.save(dto);
+
 
         final BookDto expectedDto = BookDto.builder()
                 .title(dto.getTitle() == null ? originalTitle : dto.getTitle())
