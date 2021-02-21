@@ -128,4 +128,9 @@ class BookManagerIntegrationTest {
 
         assertThrows(BookNotFoundException.class, () -> manager.save(givenDto));
     }
+
+    @Test
+    void ShouldNot_LoadBook_When_BookWithSpecifiedLocationDoesntExist() {
+        assertThrows(BookNotFoundException.class, () -> manager.load(Long.MAX_VALUE));
+    }
 }
