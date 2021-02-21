@@ -26,16 +26,14 @@ class BookServiceIntegrationTest {
     private final String targetBookTitle = "RESTful Java with JAX-RS 2.0, 2nd Edition";
     private final String targetBookIsbn13 = "9781449361341";
     private final String targetBookIsbn10 = "144936134X";
-    private final BigDecimal targetBookPrice = BigDecimal.valueOf(22.00);
+    private final BigDecimal targetBookPrice = new BigDecimal("22.00");
     private final String unrelatedTitle = "This is another title unrelated to the ISBN13 of the target book";
     private final String validButNotInItBookIsbn13 = "9786227233797";
     private final String invalidIsbn10 = "1449361340";
-    private final BigDecimal unrelatedPrice = BigDecimal.valueOf(1.000);
+    private final BigDecimal unrelatedPrice = new BigDecimal("1.00");
 
     @LocalServerPort
     private int port;
-
-    private final URI bookServiceUri = URI.create(String.format("http://localhost:%d/warehouse/api/book", port));
 
     @Autowired
     private Client client;
@@ -49,7 +47,7 @@ class BookServiceIntegrationTest {
 
     private Response requestToSaveDto(BookDto givenDto) {
         return client
-                .target(bookServiceUri)
+                .target(String.format("http://localhost:%d/warehouse/api/book", port))
                 .request()
                 .post(Entity.json(givenDto));
     }
@@ -155,9 +153,9 @@ class BookServiceIntegrationTest {
 
     @Test
     void ShouldNot_LoadBook_When_BookWithSpecifiedLocationDoesntExist() {
-        final URI uri = URI.create(bookServiceUri + "/" + Long.MAX_VALUE);
+        final String location = String.format("http://localhost:%d/warehouse/api/book/10000000000", port);
 
-        final Response getResponse = requestToLoadDto(uri);
+        final Response getResponse = requestToLoadDto(URI.create(location));
 
         assertEquals(Status.NOT_FOUND, getResponse.getStatusInfo());
     }
