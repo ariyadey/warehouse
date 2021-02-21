@@ -157,16 +157,8 @@ class BookServiceIntegrationTest {
     void ShouldNot_LoadBook_When_BookWithSpecifiedLocationDoesntExist() {
         final URI uri = URI.create(bookServiceUri + "/" + Long.MAX_VALUE);
 
-        assertEquals(Status.OK, getResponse.getStatusInfo());
-        assertEquals(expectedDto, getResponse.readEntity(BookDto.class));
-    }
+        final Response getResponse = requestToLoadDto(uri);
 
-    private void assertFailsWhenSaving(Response.StatusType expectedStatus, BookDto dto) {
-        final Response postResponse = client
-                .target(String.format("http://localhost:%d/warehouse/api/book", port))
-                .request(MediaType.TEXT_PLAIN)
-                .post(Entity.json(dto));
-
-        assertEquals(expectedStatus.getStatusCode(), postResponse.getStatus());
+        assertEquals(Status.NOT_FOUND, getResponse.getStatusInfo());
     }
 }
