@@ -1,29 +1,23 @@
-package ir.asta.training.warehouse.service;
+package ir.asta.training.warehouse.manager.book;
 
 import ir.asta.training.warehouse.dto.BookDto;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import ir.asta.training.warehouse.manager.book.exception.BookNotFoundException;
+import ir.asta.training.warehouse.manager.book.exception.BookNotProcessableException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 
-import static javax.ws.rs.core.Response.Status;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Transactional
+@SpringBootTest
 @AutoConfigureTestDatabase
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class BookServiceIntegrationTest {
+class BookManagerIntegrationTest {
 
     private final String originalTitle = "RESTful Java with JAX-RS 2.0, 2nd Edition";
     private final String mockTitle = "This is a fake title for testing purposes";
@@ -33,23 +27,11 @@ class BookServiceIntegrationTest {
     private final String invalidIsbn10 = "1449361340";
     private final String validIsbn13 = itBookNonExistingIsbn13;
     private final String invalidIsbn13 = "9781449361340";
-    private final BigDecimal originalPrice = new BigDecimal("22.00");
-    private final BigDecimal mockPrice = new BigDecimal("1.00");
+    private final BigDecimal originalPrice = BigDecimal.valueOf(22.00);
+    private final BigDecimal mockPrice = BigDecimal.valueOf(1.000);
 
-    @LocalServerPort
-    private int port;
-
-    private Client client;
-
-    @BeforeAll
-    void init() {
-        client = ClientBuilder.newClient();
-    }
-
-    @AfterAll
-    void terminate() {
-        client.close();
-    }
+    @Autowired
+    private BookManager manager;
 
     @Test
     void Should_SaveBook_When_BothIsbnsAreValid_And_OtherFieldsCompleted() {
@@ -96,7 +78,7 @@ class BookServiceIntegrationTest {
                 .price(mockPrice)
                 .build();
 
-        assertThrowsWhenSaving(ExtendedStatus.UNPROCESSABLE_ENTITY, dto);
+        assertThrows(BookNotProcessableException.class, () -> manager.save(dto));
     }
 
     @Test
@@ -107,39 +89,20 @@ class BookServiceIntegrationTest {
                 .isbn13(itBookNonExistingIsbn13)
                 .build();
 
-        assertThrowsWhenSaving(Status.NOT_FOUND, dto);
+        assertThrows(BookNotFoundException.class, () -> manager.save(dto));
     }
 
     private void assertSaves(BookDto dto) {
-        final Response postResponse = client
-                .target(String.format("http://localhost:%d/warehouse/api/book", port))
-                .request()
-                .post(Entity.json(dto));
+        final long entityId = manager.save(dto);
 
-        assertEquals(Status.CREATED, postResponse.getStatusInfo());
-
-
-        final Response getResponse = client
-                .target(postResponse.getLocation())
-                .request(MediaType.APPLICATION_JSON)
-                .get();
         final BookDto expectedDto = BookDto.builder()
                 .title(dto.getTitle() == null ? originalTitle : dto.getTitle())
                 .isbn10(dto.getIsbn10() == null ? validIsbn10 : dto.getIsbn10())
                 .isbn13(dto.getIsbn13() == null ? itBookExistingIsbn13 : dto.getIsbn13())
                 .price(dto.getPrice() == null ? originalPrice : dto.getPrice())
                 .build();
+        final BookDto actualDto = manager.load(entityId);
 
-        assertEquals(Status.OK, getResponse.getStatusInfo());
-        assertEquals(expectedDto, getResponse.readEntity(BookDto.class));
-    }
-
-    private void assertThrowsWhenSaving(Response.StatusType expectedStatus, BookDto dto) {
-        final Response postResponse = client
-                .target(String.format("http://localhost:%d/warehouse/api/book", port))
-                .request(MediaType.TEXT_PLAIN)
-                .post(Entity.json(dto));
-
-        assertEquals(expectedStatus.getStatusCode(), postResponse.getStatus());
+        assertEquals(expectedDto, actualDto);
     }
 }

@@ -9,11 +9,11 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class BookDto {
+    private String title;
     private String isbn10;
     private String isbn13;
     private BigDecimal price;
-    private String title;
 }
