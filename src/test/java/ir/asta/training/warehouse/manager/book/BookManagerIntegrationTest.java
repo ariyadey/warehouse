@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class BookManagerIntegrationTest {
 
     private final String originalTitle = "RESTful Java with JAX-RS 2.0, 2nd Edition";
-    private final String mockTitle = "This is a fake title for testing purposes";
+    private final String fakeTitle = "This is a fake title for testing purposes";
     private final String itBookExistingIsbn13 = "9781449361341";
     private final String itBookNonExistingIsbn13 = "9786227233797";
     private final String validIsbn10 = "144936134X";
@@ -32,7 +32,7 @@ class BookManagerIntegrationTest {
     private final String validIsbn13 = itBookNonExistingIsbn13;
     private final String invalidIsbn13 = "9781449361340";
     private final BigDecimal originalPrice = BigDecimal.valueOf(22.00);
-    private final BigDecimal mockPrice = BigDecimal.valueOf(1.000);
+    private final BigDecimal fakePrice = BigDecimal.valueOf(1.000);
 
     @Autowired
     private BookManager manager;
@@ -44,10 +44,10 @@ class BookManagerIntegrationTest {
     void Should_SaveBook_When_BothIsbnsAreValid_And_OtherFieldsCompleted() {
         final BookDto dto = BookDto
                 .builder()
-                .title(mockTitle)
+                .title(fakeTitle)
                 .isbn10(validIsbn10)
                 .isbn13(validIsbn13)
-                .price(mockPrice)
+                .price(fakePrice)
                 .build();
 
         assertSaves(dto);
@@ -69,7 +69,7 @@ class BookManagerIntegrationTest {
         final BookDto dto = BookDto
                 .builder()
                 .isbn13(itBookExistingIsbn13)
-                .price(mockPrice)
+                .price(fakePrice)
                 .build();
 
         assertSaves(dto);
@@ -79,10 +79,10 @@ class BookManagerIntegrationTest {
     void ShouldNot_SaveBook_When_OneOfIsbnsAreInvalid() {
         final BookDto dto = BookDto
                 .builder()
-                .title(mockTitle)
+                .title(fakeTitle)
                 .isbn10(invalidIsbn10)
                 .isbn13(invalidIsbn13)
-                .price(mockPrice)
+                .price(fakePrice)
                 .build();
 
         assertThrows(BookNotProcessableException.class, () -> manager.save(dto));
