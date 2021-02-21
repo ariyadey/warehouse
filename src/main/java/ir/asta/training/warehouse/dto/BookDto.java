@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Data
+@NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class BookDto {
     private String title;
     private String isbn10;

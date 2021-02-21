@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 
 import static javax.ws.rs.core.Response.Status;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
@@ -96,7 +95,7 @@ class BookServiceIntegrationTest {
                 .price(mockPrice)
                 .build();
 
-        assertThrowsWhenSaving(ExtendedStatus.UNPROCESSABLE_ENTITY, dto);
+        assertFailsWhenSaving(ExtendedStatus.UNPROCESSABLE_ENTITY, dto);
     }
 
     @Test
@@ -107,7 +106,7 @@ class BookServiceIntegrationTest {
                 .isbn13(itBookNonExistingIsbn13)
                 .build();
 
-        assertThrowsWhenSaving(Status.NOT_FOUND, dto);
+        assertFailsWhenSaving(Status.NOT_FOUND, dto);
     }
 
     private void assertSaves(BookDto dto) {
@@ -134,7 +133,7 @@ class BookServiceIntegrationTest {
         assertEquals(expectedDto, getResponse.readEntity(BookDto.class));
     }
 
-    private void assertThrowsWhenSaving(Response.StatusType expectedStatus, BookDto dto) {
+    private void assertFailsWhenSaving(Response.StatusType expectedStatus, BookDto dto) {
         final Response postResponse = client
                 .target(String.format("http://localhost:%d/warehouse/api/book", port))
                 .request(MediaType.TEXT_PLAIN)
