@@ -2,7 +2,6 @@ package ir.asta.training.warehouse.service;
 
 import ir.asta.training.warehouse.dto.BookDto;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BookServiceIntegrationTest {
 
     private final String targetBookTitle = "RESTful Java with JAX-RS 2.0, 2nd Edition";
