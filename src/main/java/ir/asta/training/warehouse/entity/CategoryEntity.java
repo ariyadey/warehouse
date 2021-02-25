@@ -7,34 +7,24 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import java.math.BigDecimal;
 
 @Entity
-@Table(name = "WH_BOOK")
+@Table(name = "WH_CATEGORY")
 @Data
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class BookEntity {
+public class CategoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(nullable = false)
-    @NotNull
-    private String title;
-
     @Column(nullable = false, unique = true)
     @NotNull
-    private String isbn10;
-
-    @Column(nullable = false, unique = true)
-    @NotNull
-    private String isbn13;
+    private String code;
 
     @Column(nullable = false)
-    @Positive
-    private BigDecimal price;
+    @NotNull
+    private String subject;
 }
