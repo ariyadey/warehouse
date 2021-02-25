@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.math.BigDecimal;
 
-@Entity
+@Entity(name = "WH_BOOK")
 @Data
 @NoArgsConstructor
 @Builder
