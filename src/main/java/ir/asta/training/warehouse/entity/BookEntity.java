@@ -10,7 +10,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 
-@Entity(name = "WH_BOOK")
+@Entity
+@Table(name = "WH_BOOK")
 @Data
 @NoArgsConstructor
 @Builder
