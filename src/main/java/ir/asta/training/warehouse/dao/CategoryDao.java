@@ -29,7 +29,7 @@ public class CategoryDao {
         TypedQuery<CategoryEntity> typedQuery = entityManager.createQuery(queryString, CategoryEntity.class);
         typedQuery.setParameter("code", code);
         try {
-            final CategoryEntity entity = typedQuery.getSingleResult();
+            CategoryEntity entity = typedQuery.getSingleResult();
             log.debug("A category is loaded from DB: {}", entity);
             return entity;
             // TODO: 26/02/2021 Shouldn't I detach it?
@@ -37,5 +37,9 @@ public class CategoryDao {
             log.debug("Category with code:{} not found in DB", code);
             throw new CategoryNotFoundException();
         }
+    }
+
+    public void remove(String code) {
+        entityManager.remove(load(code));
     }
 }
