@@ -4,5 +4,22 @@ spring:
     username: "warehouse"
     password: "warehouse"
   jpa:
+    show-sql: true
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+logging:
+  level:
+    root: info
+    ir:
+      asta:
+        training:
+          testloglevel: debug
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace
