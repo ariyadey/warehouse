@@ -4,7 +4,6 @@ import ir.asta.training.warehouse.dto.BookDto;
 import ir.asta.training.warehouse.manager.book.BookManager;
 import ir.asta.training.warehouse.manager.book.exception.BookNotFoundException;
 import ir.asta.training.warehouse.manager.book.exception.BookNotProcessableException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,6 @@ import javax.ws.rs.core.UriInfo;
 import static ir.asta.training.warehouse.service.ExtendedStatus.UNPROCESSABLE_ENTITY;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
-@Slf4j
 @Component
 @Path("book")
 public class BookService {

@@ -30,6 +30,7 @@ public enum ExtendedStatus implements Response.StatusType {
         return reason;
     }
 
+    @Override
     public String toString() {
         return this.reason;
     }
