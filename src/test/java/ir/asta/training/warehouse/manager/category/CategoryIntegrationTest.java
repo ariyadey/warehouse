@@ -21,7 +21,7 @@ class CategoryIntegrationTest {
     CategoryManager manager;
 
     @Test
-    void Should_Save_When_SubjectIsNotNullOrBlank() {
+    void Should_Save_When_SubjectHasText() {
         CategorySaveRequestDto givenDto = new CategorySaveRequestDto("A test subject");
 
         CategoryEntity dbSavedEntity = manager.save(givenDto);
@@ -31,7 +31,7 @@ class CategoryIntegrationTest {
     }
 
     @Test
-    void ShouldNot_Save_When_SubjectIsNullOrBlank() {
+    void ShouldNot_Save_When_SubjectDoesntHaveText() {
         CategorySaveRequestDto givenDto = new CategorySaveRequestDto("    ");
 
         assertThrows(CategoryNotProcessableException.class, () -> manager.save(givenDto));
