@@ -34,7 +34,7 @@ public class CategoryDao {
             return entity;
             // TODO: 26/02/2021 Shouldn't I detach it?
         } catch (NoResultException ex) {
-            log.debug("Category with code:{} not found in DB", code);
+            log.debug("Category with code: {} not found in DB", code);
             throw new CategoryNotFoundException();
         }
     }

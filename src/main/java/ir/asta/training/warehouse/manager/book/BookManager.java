@@ -40,6 +40,7 @@ public class BookManager {
         validateDto(dto);
         long entityId;
         if (hasNullField(dto)) {
+            log.debug("Book info is incomplete: {} \n Retrieving data from api.itbook.store...", dto);
             entityId = dao.save(mapper.toEntity(fillInfo(dto)));
         } else {
             entityId = dao.save(mapper.toEntity(dto));
@@ -60,6 +61,7 @@ public class BookManager {
     private void validateDto(BookDto dto) {
         if (!(isbnValidator.isIsbn13Valid(dto.getIsbn13()) &&
               ((dto.getIsbn10() == null) || isbnValidator.isIsbn10Valid(dto.getIsbn10())))) {
+            log.debug("The book dto is invalid and can't be saved into DB: {}", dto);
             throw new BookNotProcessableException();
         }
     }

@@ -16,15 +16,19 @@ public class BookDao {
     private EntityManager entityManager;
 
     public long save(BookEntity entity) {
+        log.debug("Book before saving to DB: {}", entity);
         entityManager.persist(entity);
+        log.debug("Book before saving to DB: {}", entity);
         return entity.getId();
     }
 
     public BookEntity load(long id) {
         final BookEntity entity = entityManager.find(BookEntity.class, id);
         if (entity == null) {
+            log.debug("Book with id: {} not found in DB", id);
             throw new BookNotFoundException();
         }
+        log.debug("A book is loaded from DB: {}", entity);
         return entity;
     }
 }
