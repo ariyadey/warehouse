@@ -27,4 +27,9 @@ public class CategoryEntity {
     @Column(nullable = false)
     @NotNull
     private String subject;
+
+    public CategoryEntity(String code, String subject) {
+        this.code = code;
+        this.subject = subject;
+    }
 }
