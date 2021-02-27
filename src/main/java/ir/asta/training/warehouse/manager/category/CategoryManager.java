@@ -35,6 +35,11 @@ public class CategoryManager {
         return dao.load(code);
     }
 
+    @Transactional
+    public void deleteByCode(String code) {
+        dao.remove(code);
+    }
+
     private void validate(CategorySaveRequestDto dto) {
         if (dto == null || !StringUtils.hasText(dto.getSubject())) {
             log.debug("The category dto is invalid and can't be saved into DB: {}", dto);
