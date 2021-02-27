@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "WH_CATEGORY")
@@ -21,11 +21,11 @@ public class CategoryEntity {
     private long id;
 
     @Column(nullable = false, unique = true)
-    @NotNull
+    @NotBlank
     private String code;
 
     @Column(nullable = false)
-    @NotNull
+    @NotBlank
     private String subject;
 
     public CategoryEntity(String code, String subject) {

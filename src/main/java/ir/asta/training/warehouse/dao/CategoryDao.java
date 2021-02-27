@@ -18,28 +18,32 @@ public class CategoryDao {
     private EntityManager entityManager;
 
     public CategoryEntity save(CategoryEntity entity) {
-        log.debug("Category before saving to DB: {}", entity);
+        log.debug("Category is going to save to DB: {}", entity);
         entityManager.persist(entity);
-        log.debug("Category after saving to DB: {}", entity);
+        log.info("Category saved to DB: {}", entity);
         return entity;
     }
 
     public CategoryEntity load(String code) {
-        String queryString = "select c from CategoryEntity c where c.code = :code";
-        TypedQuery<CategoryEntity> typedQuery = entityManager.createQuery(queryString, CategoryEntity.class);
-        typedQuery.setParameter("code", code);
         try {
-            CategoryEntity entity = typedQuery.getSingleResult();
-            log.debug("A category is loaded from DB: {}", entity);
-            return entity;
-            // TODO: 26/02/2021 Shouldn't I detach it?
+            return doLoad(code);
         } catch (NoResultException ex) {
-            log.debug("Category with code: {} not found in DB", code);
-            throw new CategoryNotFoundException();
+            throw new CategoryNotFoundException(code);
         }
     }
 
+    private CategoryEntity doLoad(String code) {
+        String queryString = "select c from CategoryEntity c where c.code = :code";
+        TypedQuery<CategoryEntity> typedQuery = entityManager.createQuery(queryString, CategoryEntity.class);
+        typedQuery.setParameter("code", code);
+        CategoryEntity entity = typedQuery.getSingleResult();
+        log.debug("A category is loaded from DB: {}", entity);
+        return entity;
+    }
+
     public void remove(String code) {
-        entityManager.remove(load(code));
+        CategoryEntity entity = load(code);
+        entityManager.remove(entity);
+        log.info("Category was removed from DB: {}", entity);
     }
 }

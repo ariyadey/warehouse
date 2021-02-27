@@ -4,7 +4,6 @@ spring:
     username: "warehouse"
     password: "warehouse"
   jpa:
-    show-sql: true
     hibernate:
       ddl-auto: update
     properties:
@@ -16,10 +15,10 @@ logging:
     ir:
       asta:
         training:
-          testloglevel: debug
+          testloglevel: info
     org:
       hibernate:
         type:
           descriptor:
             sql:
-              BasicBinder: trace
+              BasicBinder: off

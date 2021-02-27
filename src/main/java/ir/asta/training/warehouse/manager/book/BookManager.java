@@ -4,14 +4,12 @@ import ir.asta.training.warehouse.dao.BookDao;
 import ir.asta.training.warehouse.dto.BookDto;
 import ir.asta.training.warehouse.manager.book.exception.BookNotProcessableException;
 import ir.asta.training.warehouse.mapper.BookMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import static ir.asta.training.warehouse.util.ReflectionUtil.hasNullField;
 
-@Slf4j
 @Component
 public class BookManager {
     private final BookDao dao;
@@ -30,7 +28,7 @@ public class BookManager {
         this.isbnValidator = isbnValidator;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public BookDto load(long id) {
         return mapper.toDto(dao.load(id));
     }
@@ -40,7 +38,6 @@ public class BookManager {
         validateDto(dto);
         long entityId;
         if (hasNullField(dto)) {
-            log.debug("Book info is incomplete: {} \n Retrieving data from api.itbook.store...", dto);
             entityId = dao.save(mapper.toEntity(fillInfo(dto)));
         } else {
             entityId = dao.save(mapper.toEntity(dto));
@@ -61,7 +58,6 @@ public class BookManager {
     private void validateDto(BookDto dto) {
         if (!(isbnValidator.isIsbn13Valid(dto.getIsbn13()) &&
               ((dto.getIsbn10() == null) || isbnValidator.isIsbn10Valid(dto.getIsbn10())))) {
-            log.debug("The book dto is invalid and can't be saved into DB: {}", dto);
             throw new BookNotProcessableException();
         }
     }

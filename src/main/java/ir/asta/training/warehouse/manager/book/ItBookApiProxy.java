@@ -23,6 +23,7 @@ public class ItBookApiProxy {
     }
 
     public ItBookApiDto load(String isbn13) {
+        log.debug("Retrieving data from api.itbook.store...");
         final ItBookApiDto dto = client
                 .target(format("https://api.itbook.store/1.0/books/%s", isbn13))
                 .request(MediaType.APPLICATION_JSON)
@@ -33,7 +34,6 @@ public class ItBookApiProxy {
 
     private void validateDtoHasNoErrors(ItBookApiDto dto) {
         if (!dto.getError().equals("0")) {
-            log.debug("Book with ISBN13: {} not found in api.itbook.store", dto.getIsbn13());
             throw new BookNotFoundException();
         }
     }

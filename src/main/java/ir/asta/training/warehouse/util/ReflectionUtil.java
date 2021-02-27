@@ -1,7 +1,10 @@
 package ir.asta.training.warehouse.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.lang.reflect.Field;
 
+@Slf4j
 public class ReflectionUtil {
 
     private ReflectionUtil() {
@@ -17,6 +20,7 @@ public class ReflectionUtil {
 
             try {
                 if (field.get(t) == null) {
+                    log.debug("{} info is incomplete", t.getClass().getSimpleName());
                     result = true;
                     if (!accessibleByDefault) {
                         field.setAccessible(false);
