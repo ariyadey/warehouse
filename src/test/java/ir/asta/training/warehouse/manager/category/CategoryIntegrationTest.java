@@ -25,12 +25,13 @@ class CategoryIntegrationTest {
         CategorySaveRequestDto givenDto = new CategorySaveRequestDto("A test subject");
 
         CategoryEntity dbSavedEntity = manager.save(givenDto);
-        CategoryEntity dbLoadedEntity = manager.loadByCode(dbSavedEntity.getCode());
+        String generatedCode = dbSavedEntity.getCode();
+        CategoryEntity dbLoadedEntity = manager.loadByCode(generatedCode);
 
         assertEquals(dbSavedEntity, dbLoadedEntity);
 
-        assertDoesNotThrow(() -> manager.deleteByCode(dbSavedEntity.getCode()));
-        assertThrows(CategoryNotFoundException.class, () -> manager.loadByCode(dbSavedEntity.getCode()));
+        assertDoesNotThrow(() -> manager.deleteByCode(generatedCode));
+        assertThrows(CategoryNotFoundException.class, () -> manager.loadByCode(generatedCode));
     }
 
     @Test
