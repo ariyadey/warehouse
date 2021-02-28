@@ -16,7 +16,9 @@ public class BookDao {
     private EntityManager entityManager;
 
     public long save(BookEntity entity) {
+        log.debug("Book is going to save to DB: {}", entity);
         entityManager.persist(entity);
+        log.info("Book saved to DB: {}", entity);
         return entity.getId();
     }
 
@@ -25,6 +27,7 @@ public class BookDao {
         if (entity == null) {
             throw new BookNotFoundException();
         }
+        log.debug("A book is loaded from DB: {}", entity);
         return entity;
     }
 }

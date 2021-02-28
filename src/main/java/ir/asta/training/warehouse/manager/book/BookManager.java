@@ -4,14 +4,12 @@ import ir.asta.training.warehouse.dao.BookDao;
 import ir.asta.training.warehouse.dto.BookDto;
 import ir.asta.training.warehouse.manager.book.exception.BookNotProcessableException;
 import ir.asta.training.warehouse.mapper.BookMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import static ir.asta.training.warehouse.util.ReflectionUtil.hasNullField;
 
-@Slf4j
 @Component
 public class BookManager {
     private final BookDao dao;
@@ -30,7 +28,7 @@ public class BookManager {
         this.isbnValidator = isbnValidator;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public BookDto load(long id) {
         return mapper.toDto(dao.load(id));
     }

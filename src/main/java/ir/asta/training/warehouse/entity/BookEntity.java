@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
@@ -23,18 +24,19 @@ public class BookEntity {
     private long id;
 
     @Column(nullable = false)
-    @NotNull
+    @NotBlank
     private String title;
 
     @Column(nullable = false, unique = true)
-    @NotNull
+    @NotBlank
     private String isbn10;
 
     @Column(nullable = false, unique = true)
-    @NotNull
+    @NotBlank
     private String isbn13;
 
     @Column(nullable = false)
+    @NotNull
     @Positive
     private BigDecimal price;
 }

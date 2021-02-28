@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@Transactional
 @SpringBootTest
 @AutoConfigureTestDatabase
+@Transactional
 class BookManagerIntegrationTest {
 
     private final String targetBookTitle = "RESTful Java with JAX-RS 2.0, 2nd Edition";

@@ -6,3 +6,20 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+logging:
+  level:
+    root: info
+    ir:
+      asta:
+        training:
+          testloglevel: info
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: off
