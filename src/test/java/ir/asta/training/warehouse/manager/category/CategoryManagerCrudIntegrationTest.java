@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @Transactional
-class CategoryManagerIntegrationTest {
+class CategoryManagerCrudIntegrationTest {
 
     @Autowired
     CategoryManager manager;
