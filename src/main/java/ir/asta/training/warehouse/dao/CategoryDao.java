@@ -18,9 +18,9 @@ public class CategoryDao {
     private EntityManager entityManager;
 
     public CategoryEntity save(CategoryEntity entity) {
-        log.debug("Category is going to save to DB: {}", entity);
+        log.debug("Saving the category to DB... {}", entity);
         entityManager.persist(entity);
-        log.info("Category saved to DB: {}", entity);
+        log.info("The category saved to DB: {}", entity);
         return entity;
     }
 
@@ -33,15 +33,17 @@ public class CategoryDao {
     }
 
     private CategoryEntity doLoad(String code) {
+        log.debug("Loading the category from DB with code: {}", code);
         String queryString = "select c from CategoryEntity c where c.code = :code";
         TypedQuery<CategoryEntity> typedQuery = entityManager.createQuery(queryString, CategoryEntity.class);
         typedQuery.setParameter("code", code);
         CategoryEntity entity = typedQuery.getSingleResult();
-        log.debug("A category is loaded from DB: {}", entity);
+        log.debug("The category is loaded from DB: {}", entity);
         return entity;
     }
 
     public void remove(String code) {
+        log.debug("Removing the category from DB with code: {}", code);
         CategoryEntity entity = load(code);
         entityManager.remove(entity);
         log.info("Category was removed from DB: {}", entity);
