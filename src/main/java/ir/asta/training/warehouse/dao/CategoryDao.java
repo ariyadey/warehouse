@@ -5,10 +5,8 @@ import ir.asta.training.warehouse.manager.category.exception.CategoryNotFoundExc
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -40,6 +38,15 @@ public class CategoryDao {
         CategoryEntity entity = typedQuery.getSingleResult();
         log.debug("The category is loaded from DB: {}", entity);
         return entity;
+    }
+
+    public CategoryEntity update(CategoryEntity entity) {
+        log.debug("Updating the category in DB with code: {} and old subject: {}", entity.getCode(),
+                entity.getSubject());
+        final CategoryEntity dbLoadedEntity = load(entity.getCode());
+        dbLoadedEntity.setSubject(entity.getSubject());
+        log.info("The category updated in DB: {}", dbLoadedEntity);
+        return dbLoadedEntity;
     }
 
     public void remove(String code) {

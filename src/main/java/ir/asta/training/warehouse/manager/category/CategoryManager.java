@@ -33,6 +33,12 @@ public class CategoryManager {
     }
 
     @Transactional
+    public CategoryEntity update(String code, CategorySaveRequestDto dto) {
+        final CategoryEntity entity = new CategoryEntity(code, dto.getSubject());
+        return dao.update(entity);
+    }
+
+    @Transactional
     public void deleteByCode(String code) {
         dao.remove(code);
     }
