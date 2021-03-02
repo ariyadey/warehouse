@@ -20,7 +20,7 @@ public class CategoryEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, updatable = false)
     @NotBlank
     private String code;
 
