@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
+import static ir.asta.training.warehouse.util.ReflectionUtil.containsField;
 import static ir.asta.training.warehouse.util.ReflectionUtil.hasNullField;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,7 +14,7 @@ class ReflectionUtilUnitTest {
 
     @Test
     void Should_ReturnTrue_When_ObjectHasNoNullField() {
-        final BookDto dto = BookDto.builder()
+        BookDto dto = BookDto.builder()
                 .title("A title")
                 .isbn10("4567984359")
                 .isbn13("4798461305460")
@@ -25,7 +26,7 @@ class ReflectionUtilUnitTest {
 
     @Test
     void Should_ReturnFalse_When_ObjectHasNullField() {
-        final BookDto dto = BookDto.builder()
+        BookDto dto = BookDto.builder()
                 .title("A title")
                 .isbn10("4567984359")
                 .isbn13("4798461305460")
@@ -34,4 +35,19 @@ class ReflectionUtilUnitTest {
         assertTrue(hasNullField(dto));
     }
 
+    @Test
+    void Should_ReturnTrue_When_ObjectContainsField() {
+        Class<?> givenClass = BookDto.class;
+        String givenFieldName = "title";
+
+        assertTrue(containsField(givenClass, givenFieldName));
+    }
+
+    @Test
+    void Should_ReturnFalse_When_ObjectDoesntContainField() {
+        Class<?> givenClass = BookDto.class;
+        String givenFieldName = "TITLE";
+
+        assertFalse(containsField(givenClass, givenFieldName));
+    }
 }

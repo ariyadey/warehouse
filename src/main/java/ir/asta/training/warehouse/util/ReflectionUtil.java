@@ -33,4 +33,15 @@ public class ReflectionUtil {
         }
         return result;
     }
+
+    public static boolean containsField(Class<?> givenClass, String fieldName) {
+        boolean result;
+        try {
+            givenClass.getDeclaredField(fieldName);
+            result = true;
+        } catch (NoSuchFieldException e) {
+            result = false;
+        }
+        return result;
+    }
 }
