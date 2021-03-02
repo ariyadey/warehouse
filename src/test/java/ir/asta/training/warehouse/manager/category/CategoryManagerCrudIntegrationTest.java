@@ -23,14 +23,23 @@ class CategoryManagerCrudIntegrationTest {
     CategoryManager manager;
 
     @Test
-    void Should_SaveLoadDelete_When_SubjectHasText() {
-        CategorySaveRequestDto givenDto = new CategorySaveRequestDto("A test subject");
+    void Should_CRUD_When_SubjectHasText() {
+        CategorySaveRequestDto givenDto = new CategorySaveRequestDto("A test subject to save");
 
-        CategoryEntity dbSavedEntity = manager.save(givenDto);
-        String generatedCode = dbSavedEntity.getCode();
+        final CategoryEntity dbSavedEntity = manager.save(givenDto);
+        final String generatedCode = dbSavedEntity.getCode();
         CategoryEntity dbLoadedEntity = manager.loadByCode(generatedCode);
 
         assertEquals(dbSavedEntity, dbLoadedEntity);
+
+
+        givenDto = new CategorySaveRequestDto("A test subject to update");
+
+        final CategoryEntity dbUpdatedEntity = manager.update(generatedCode, givenDto);
+        dbLoadedEntity = manager.loadByCode(generatedCode);
+
+        assertEquals(dbUpdatedEntity, dbLoadedEntity);
+
 
         assertDoesNotThrow(() -> manager.deleteByCode(generatedCode));
         assertThrows(CategoryNotFoundException.class, () -> manager.loadByCode(generatedCode));
@@ -51,6 +60,14 @@ class CategoryManagerCrudIntegrationTest {
     @Test
     void ShouldNot_Load_When_EntityWithSpecifiedCodeDoesNotExist() {
         assertThrows(CategoryNotFoundException.class, () -> manager.loadByCode("Entity with this code does not exist"));
+    }
+
+    @Test
+    void ShouldNot_Update_When_EntityWithSpecifiedCodeDoesNotExist() {
+        CategorySaveRequestDto givenDto = new CategorySaveRequestDto("A test subject to update");
+
+        assertThrows(CategoryNotFoundException.class,
+                () -> manager.update("Entity with this code does not exist", givenDto));
     }
 
     @Test
