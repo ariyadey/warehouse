@@ -23,3 +23,7 @@ logging:
           descriptor:
             sql:
               BasicBinder: off
+warehouse:
+  search:
+    default-page-size: 10
+    default-page-number: 1
